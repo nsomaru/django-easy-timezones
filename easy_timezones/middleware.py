@@ -26,14 +26,19 @@ def load_db_settings():
     current_dir = Path(__file__).parent
     GEOIP_DEFAULT_DATABASE = current_dir / 'GeoLiteCity.dat'
     GEOIPV6_DEFAULT_DATABASE = current_dir / 'GeoLiteCityv6.dat'
+    GEOIP2_DEFAULT_DATABASE = current_dir / 'GeoLite2-City.mmdb'
 
     # Loading the settings
-    GEOIP_DATABASE = getattr(settings, 'GEOIP_DATABASE', GEOIP_DEFAULT_DATABASE)
     GEOIP_VERSION = getattr(settings, 'GEOIP_VERSION', 1)
     if GEOIP_VERSION not in [1, 2]:
         raise ImproperlyConfigured(
             "GEOIP_VERSION setting is defined, but only versions 1 and 2 "
             "are supported")
+    if GEOIP_VERSION == 1:
+        GEOIP_DATABASE = getattr(settings, 'GEOIP_DATABASE', GEOIP_DEFAULT_DATABASE)
+    elif GEOIP_VERSION == 2:
+        GEOIP_DATABASE = getattr(settings, 'GEOIP_DATABASE', GEOIP2_DEFAULT_DATABASE)
+
     if not GEOIP_DATABASE:
         raise ImproperlyConfigured(
             "GEOIP_DATABASE setting has not been properly defined.")
