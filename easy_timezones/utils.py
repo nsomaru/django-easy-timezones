@@ -1,26 +1,25 @@
 # -*- coding: utf-8 -*-
 
 import ipaddress
-import socket
-import re
+
 
 def is_valid_ip(ip_address):
     """ Check Validity of an IP address """
-
     try:
-        ip = ipaddress.ip_address(u'' + ip_address)
+        ipaddress.ip_address(u'' + ip_address)
         return True
-    except ValueError as e:
+    except ValueError:
         return False
+
 
 def is_local_ip(ip_address):
     """ Check if IP is local """
-
     try:
         ip = ipaddress.ip_address(u'' + ip_address)
         return ip.is_loopback
-    except ValueError as e:
+    except ValueError:
         return None
+
 
 def get_ip_address_from_request(request):
     """ Makes the best attempt to get the client's real IP or return the loopback """
