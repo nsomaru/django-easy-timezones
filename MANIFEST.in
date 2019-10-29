@@ -1,2 +1,2 @@
 include README.md LICENSE requirements.txt
-recursive-include easy_timezones *.py *.dat
+recursive-include easy_timezones *.py *.dat *.mmdb
