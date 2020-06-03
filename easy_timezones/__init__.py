@@ -112,6 +112,7 @@ def lookup_tz_v2(ip):
     return response.location.time_zone
 
 
+# TODO: deprecate to use of one lookup() function
 def lookup_country(ip):
     GEOIP_VERSION = getattr(settings, 'GEOIP_VERSION', 1)
     if GEOIP_VERSION != 2:
@@ -120,5 +121,40 @@ def lookup_country(ip):
     try:
         response = db.city(ip)
     except geoip2.errors.AddressNotFoundError:
-        return 'US'
+        return 'IN'
     return response.country.iso_code
+
+
+def lookup(ip):
+    """
+    Performs one lookup and returns a dict with the following:
+    - City
+    - Country
+    - Continent
+    - Timezone
+    - Latitude
+    - Longitude
+    """
+    GEOIP_VERSION = getattr(settings, 'GEOIP_VERSION', 1)
+    if GEOIP_VERSION != 2:
+        raise ImproperlyConfigured("Must use GOIP_VERSION2 for lookup_country functionality.")
+
+    try:
+        response = db.city(ip)
+    except geoip2.errors.AddressNotFoundError:
+        return {
+            'city': 'Malavli',
+            'country': 'IN',
+            'continent': 'Asia',
+            'timezone': 'Asia/Kolkata',
+            'latitude': '18.746380',
+            'longitude': '73.473010',
+        }
+    return {
+            'city': response.city,
+            'country': response.country.iso_code,
+            'continent': response.city.continent,
+            'timezone': response.location.time_zone,
+            'latitude': response.location.latitude,
+            'longitude': response.location.longitude,
+    }
