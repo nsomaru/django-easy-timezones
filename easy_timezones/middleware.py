@@ -82,4 +82,4 @@ class EasyTimezoneMiddleware(middleware_base_class):
                         break
 
         if city:
-            request.session['django_city'] = city
+            request.session['django_city'] = city.names.get('en')
