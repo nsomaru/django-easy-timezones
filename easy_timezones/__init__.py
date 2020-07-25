@@ -125,6 +125,18 @@ def lookup_country(ip):
     return response.country.iso_code
 
 
+def lookup_city(ip):
+    GEOIP_VERSION = getattr(settings, 'GEOIP_VERSION', 1)
+    if GEOIP_VERSION != 2:
+        raise ImproperlyConfigured("Must use GOIP_VERSION2 for lookup_city functionality.")
+
+    try:
+        response = db.city(ip)
+    except geoip2.errors.AddressNotFoundError:
+        return 'IN'
+    return response.city
+
+
 def lookup(ip):
     """
     Performs one lookup and returns a dict with the following:
@@ -137,7 +149,7 @@ def lookup(ip):
     """
     GEOIP_VERSION = getattr(settings, 'GEOIP_VERSION', 1)
     if GEOIP_VERSION != 2:
-        raise ImproperlyConfigured("Must use GOIP_VERSION2 for lookup_country functionality.")
+        raise ImproperlyConfigured("Must use GOIP_VERSION2 for general lookup functionality.")
 
     try:
         response = db.city(ip)

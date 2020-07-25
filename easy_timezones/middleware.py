@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 from .signals import detected_timezone
 from .utils import get_ip_address_from_request, is_valid_ip, is_local_ip
-from . import load_db, db_loaded, lookup_tz_v1, lookup_tz_v2, lookup_country
+from . import load_db, db_loaded, lookup_tz_v1, lookup_tz_v2, lookup_country, lookup_city
 
 
 if django.VERSION >= (1, 10):
@@ -58,7 +58,7 @@ class EasyTimezoneMiddleware(middleware_base_class):
 
         country = request.session.get('django_country')
         if not country:
-            country = 'US'  # default
+            country = 'IN'  # default
             client_ip = get_ip_address_from_request(request)
             ip_addrs = client_ip.split(',')
             for ip in ip_addrs:
@@ -69,3 +69,17 @@ class EasyTimezoneMiddleware(middleware_base_class):
 
         if country:
             request.session['django_country'] = country
+
+        city = request.session.get('django_city')
+        if not city:
+            city = 'Mumbai'  # default
+            client_ip = get_ip_address_from_request(request)
+            ip_addrs = client_ip.split(',')
+            for ip in ip_addrs:
+                if is_valid_ip(ip) and not is_local_ip(ip):
+                    if version == 2:
+                        city = lookup_city(ip)
+                        break
+
+        if city:
+            request.session['django_city'] = city
