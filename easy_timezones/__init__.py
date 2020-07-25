@@ -134,7 +134,7 @@ def lookup_city(ip):
         response = db.city(ip)
     except geoip2.errors.AddressNotFoundError:
         return 'IN'
-    return response.city
+    return response.city.names.get('en')
 
 
 def lookup(ip):
